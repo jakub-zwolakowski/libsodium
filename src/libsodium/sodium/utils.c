@@ -383,6 +383,9 @@ sodium_sub(unsigned char *a, const unsigned char *b, const size_t len)
 int
 _sodium_alloc_init(void)
 {
+#ifdef __TRUSTINSOFT_ANALYZER__
+    page_size = (size_t) 4096;
+#else
 #ifdef HAVE_ALIGNED_MALLOC
 # if defined(_SC_PAGESIZE)
     long page_size_ = sysconf(_SC_PAGESIZE);
@@ -398,6 +401,7 @@ _sodium_alloc_init(void)
         sodium_misuse(); /* LCOV_EXCL_LINE */
     }
 #endif
+#endif /* __TRUSTINSOFT_ANALYZER__ */
     randombytes_buf(canary, sizeof canary);
 
     return 0;
