@@ -166,4 +166,4 @@ testing
 *.c_functions.csv
 *.c_time.txt
 *.c_variables.csv
-__vfs-tis-*.[c|h]
+__vfs-tis*.[c|h]
