@@ -8,7 +8,7 @@ int rand(void) {
 #include <stdarg.h>
 #include <assert.h>
 
-/*@ ensures UB: \result >= 0; */
+/*@ ensures \result >= 0; */
 int open(const char * filename, int flags, ...) {
   va_list va;
   va_start(va, flags);
