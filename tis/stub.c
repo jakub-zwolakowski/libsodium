@@ -8,11 +8,11 @@ int rand(void) {
 #include <stdarg.h>
 #include <assert.h>
 
+/*@ ensures UB: \result >= 0; */
 int open(const char * filename, int flags, ...) {
   va_list va;
   va_start(va, flags);
   int rv = __mkfs_open(filename, flags, va);
-  //@ assert UB: rv >= 0;
   va_end(va);
   return rv;
 }
