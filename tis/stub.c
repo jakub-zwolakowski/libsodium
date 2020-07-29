@@ -8,6 +8,8 @@ int rand(void) {
 #include <stdarg.h>
 #include <assert.h>
 
+int __mkfs_open(const char * filename, int flags, va_list va);
+
 /*@ ensures \result >= 0; */
 int open(const char * filename, int flags, ...) {
   va_list va;

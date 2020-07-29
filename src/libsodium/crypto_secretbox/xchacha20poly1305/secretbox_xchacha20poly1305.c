@@ -31,6 +31,7 @@ crypto_secretbox_xchacha20poly1305_detached(unsigned char *c,
 
     crypto_core_hchacha20(subkey, n, k, NULL);
 
+#ifndef __TRUSTINSOFT_ANALYZER__
     if (((uintptr_t) c > (uintptr_t) m &&
          (uintptr_t) c - (uintptr_t) m < mlen) ||
         ((uintptr_t) m > (uintptr_t) c &&
@@ -38,6 +39,7 @@ crypto_secretbox_xchacha20poly1305_detached(unsigned char *c,
         memmove(c, m, mlen);
         m = c;
     }
+#endif
     memset(block0, 0U, crypto_secretbox_xchacha20poly1305_ZEROBYTES);
     COMPILER_ASSERT(64U >= crypto_secretbox_xchacha20poly1305_ZEROBYTES);
     mlen0 = mlen;
@@ -108,6 +110,7 @@ crypto_secretbox_xchacha20poly1305_open_detached(unsigned char *m,
     if (m == NULL) {
         return 0;
     }
+#ifndef __TRUSTINSOFT_ANALYZER__
     if (((uintptr_t) c >= (uintptr_t) m &&
          (uintptr_t) c - (uintptr_t) m < clen) ||
         ((uintptr_t) m >= (uintptr_t) c &&
@@ -115,6 +118,7 @@ crypto_secretbox_xchacha20poly1305_open_detached(unsigned char *m,
         memmove(m, c, clen);
         c = m;
     }
+#endif
     mlen0 = clen;
     if (mlen0 > 64U - crypto_secretbox_xchacha20poly1305_ZEROBYTES) {
         mlen0 = 64U - crypto_secretbox_xchacha20poly1305_ZEROBYTES;
