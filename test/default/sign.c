@@ -1063,8 +1063,13 @@ int main(void)
     unsigned char      extracted_seed[crypto_sign_ed25519_SEEDBYTES];
     unsigned char      extracted_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
     unsigned char      sig[crypto_sign_BYTES];
+#ifdef  __TRUSTINSOFT_ANALYZER__
+    unsigned char      sm[64 + crypto_sign_BYTES];
+    unsigned char      m[64];
+#else
     unsigned char      sm[1024 + crypto_sign_BYTES];
     unsigned char      m[1024];
+#endif
     unsigned char      skpk[crypto_sign_SECRETKEYBYTES];
     unsigned char      pk[crypto_sign_PUBLICKEYBYTES];
     unsigned char      sk[crypto_sign_SECRETKEYBYTES];

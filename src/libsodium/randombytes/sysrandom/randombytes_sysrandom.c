@@ -23,6 +23,9 @@
 #endif
 #ifdef __linux__
 # ifdef HAVE_GETRANDOM
+#  ifdef __TRUSTINSOFT_ANALYZER__
+#   define getrandom(B, S, F) tis_getrandom(B, S, F)
+#  endif
 #  define HAVE_LINUX_COMPATIBLE_GETRANDOM
 # else
 #  include <sys/syscall.h>
