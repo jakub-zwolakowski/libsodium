@@ -196,6 +196,9 @@ randombytes_sysrandom_random_dev_open(void)
     do {
         fd = open(*device, O_RDONLY);
         if (fd != -1) {
+#ifdef __TRUSTINSOFT_ANALYZER__
+            return fd;
+#endif /* __TRUSTINSOFT_ANALYZER__ */
             if (fstat(fd, &st) == 0 &&
 #  ifdef __COMPCERT__
                 1
