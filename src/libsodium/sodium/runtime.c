@@ -110,6 +110,9 @@ _cpuid(unsigned int cpu_info[4U], const unsigned int cpu_info_type)
     (void) cpu_info_type;
     cpu_info[0] = cpu_info[1] = cpu_info[2] = cpu_info[3] = 0;
 #endif
+#ifdef __TRUSTINSOFT_ANALYZER__
+    cpu_info[0] = cpu_info[1] = cpu_info[2] = cpu_info[3] = 0;
+#endif
 }
 
 static int
