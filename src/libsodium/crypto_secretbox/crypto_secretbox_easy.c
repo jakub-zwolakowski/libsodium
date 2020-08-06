@@ -27,6 +27,7 @@ crypto_secretbox_detached(unsigned char *c, unsigned char *mac,
 
     crypto_core_hsalsa20(subkey, n, k, NULL);
 
+#ifndef __TRUSTINSOFT_ANALYZER__
     if (((uintptr_t) c > (uintptr_t) m &&
          (uintptr_t) c - (uintptr_t) m < mlen) ||
         ((uintptr_t) m > (uintptr_t) c &&
@@ -34,6 +35,7 @@ crypto_secretbox_detached(unsigned char *c, unsigned char *mac,
         memmove(c, m, mlen);
         m = c;
     }
+#endif /* __TRUSTINSOFT_ANALYZER__ */
     memset(block0, 0U, crypto_secretbox_ZEROBYTES);
     COMPILER_ASSERT(64U >= crypto_secretbox_ZEROBYTES);
     mlen0 = mlen;
@@ -101,6 +103,7 @@ crypto_secretbox_open_detached(unsigned char *m, const unsigned char *c,
     if (m == NULL) {
         return 0;
     }
+#ifndef __TRUSTINSOFT_ANALYZER__
     if (((uintptr_t) c >= (uintptr_t) m &&
          (uintptr_t) c - (uintptr_t) m < clen) ||
         ((uintptr_t) m >= (uintptr_t) c &&
@@ -108,6 +111,7 @@ crypto_secretbox_open_detached(unsigned char *m, const unsigned char *c,
         memmove(m, c, clen);
         c = m;
     }
+#endif /* __TRUSTINSOFT_ANALYZER__ */
     mlen0 = clen;
     if (mlen0 > 64U - crypto_secretbox_ZEROBYTES) {
         mlen0 = 64U - crypto_secretbox_ZEROBYTES;
