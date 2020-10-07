@@ -66,9 +66,9 @@ void *alloca (size_t);
 #endif
 #if defined(WINAPI_DESKTOP) || (defined(MAP_ANON) && defined(HAVE_MMAP)) || \
     defined(HAVE_POSIX_MEMALIGN)
-#ifndef __TRUSTINSOFT_ANALYZER__
-# define HAVE_ALIGNED_MALLOC
-#endif /* __TRUSTINSOFT_ANALYZER__ */
+// #ifndef __TRUSTINSOFT_ANALYZER__
+// # define HAVE_ALIGNED_MALLOC
+// #endif /* __TRUSTINSOFT_ANALYZER__ */
 #endif
 #if defined(HAVE_MPROTECT) && \
     !(defined(PROT_NONE) && defined(PROT_READ) && defined(PROT_WRITE))
