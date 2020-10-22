@@ -3,17 +3,8 @@
 import re # Regular expressions.
 from itertools import product # Cartesian product of lists.
 import json # JSON generation.
-import os
-
-# Initial checks
-if not (os.path.isdir("trustinsoft")):
-    exit("directory 'trustinsoft' not found")
-
-if not (os.path.isdir("src/libsodium")):
-    exit("directory 'src/libsodium' not found")
-
-if not (os.path.isfile("src/libsodium/include/sodium/version.h")):
-    exit("file 'src/libsodium/include/sodium/version.h' not found")
+import os # Write to files.
+import shutil # Copy file.
 
 def string_of_json(obj):
     # Output standard pretty-printed JSON (RFC 7159) with 4-space indentation.
@@ -25,7 +16,28 @@ def string_of_json(obj):
     return s
 
 # ---------------------------------------------------------------------------- #
-# ----------------------------- <machdep>.config ----------------------------- #
+# ------------------------------ INITIAL CHECKS ------------------------------ #
+# ---------------------------------------------------------------------------- #
+
+print("1. Check the environment...")
+
+if (os.path.isdir("trustinsoft")):
+    print("   > Directory 'trustinsoft' exists.")
+else:
+    exit("Directory 'trustinsoft' not found.")
+
+if (os.path.isdir("src/libsodium")):
+    print("   > Directory 'src/libsodium' exists.")
+else:
+    exit("Directory 'src/libsodium' not found.")
+
+if (os.path.isfile("src/libsodium/include/sodium/version.h")):
+    print("   > File 'src/libsodium/include/sodium/version.h' exists.")
+else:
+    exit("File 'src/libsodium/include/sodium/version.h' not found.")
+
+# ---------------------------------------------------------------------------- #
+# ------------------ GENERATE trustinsoft/<machdep>.config ------------------- #
 # ---------------------------------------------------------------------------- #
 
 machdeps = [
@@ -77,12 +89,15 @@ def make_machdep_config(machdep):
 
 machdep_configs = map(make_machdep_config, machdeps)
 
+print("2. Generate 'trustinsoft/<machdep>.config' files...")
 for machdep_config in machdep_configs:
-    print("--------- %s.config ---------" % machdep_config["machdep"])
-    # print(string_of_json(machdep_config))
+    file_name = "trustinsoft/%s.config" % machdep_config["machdep"]
+    with open(file_name, 'w') as f:
+        print("   > Generate the '%s' file." % file_name)
+        f.write(string_of_json(machdep_config))
 
 # ---------------------------------------------------------------------------- #
-# ------------------------------ common.config ------------------------------- #
+# -------------------- GENERATE trustinsoft/common.config -------------------- #
 # ---------------------------------------------------------------------------- #
 
 import glob
@@ -111,8 +126,9 @@ common_config = {
     "filesystem": make_common_config_filesystem()
 }
 
-print("--------- common.config ---------")
-print(string_of_json(common_config))
+with open('trustinsoft/common.config', 'w') as f:
+    print("3. Generate the 'trustinsoft/common.config' file.")
+    f.write(string_of_json(common_config))
 
 # ---------------------------------------------------------------------------- #
 # -------------------------------- tis.config -------------------------------- #
@@ -204,5 +220,15 @@ def make_test(test_name, test_machdep):
 tis_config = list(
     map(lambda x: make_test(x[0], x[1]), product(tests, machdeps)))
 
-print("--------- tis.config ---------")
-# print(string_of_json(tis_config))
+with open('tis.config', 'w') as f:
+    print("4. Generate the tis.config file.")
+    f.write(string_of_json(tis_config))
+
+# ---------------------------------------------------------------------------- #
+# ------------------------------ COPY version.h ------------------------------ #
+# ---------------------------------------------------------------------------- #
+
+with open('src/libsodium/include/sodium/version.h', 'r') as f_src:
+    with open('trustinsoft/sodium/version.h', 'w') as f_dest:
+        print("5. Copy the 'version.h' file.")
+        shutil.copyfileobj(f_src, f_dest)
