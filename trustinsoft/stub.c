@@ -8,11 +8,11 @@ int rand(void) {
   return 137;
 }
 
-/* Replaces the `SYS_getrandom` system call. See `compilation_cmd` in trustinsoft/gcc_x86_64.config */
+/* Replace the `SYS_getrandom` system call. See `compilation_cmd` in trustinsoft/gcc_x86_64.config */
 int tis_getrandom(void * const buf_, size_t size, int flags)
-{ 
+{
   unsigned char *buf = (unsigned char*) buf_;
-  
+
   for (size_t i = 0; i < size; i++)
     *buf++ = i;
 

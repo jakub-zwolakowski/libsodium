@@ -1,5 +1,8 @@
 #! /usr/bin/env python3
 
+# Run from the root of the project:
+# $ python3 trustinsoft/regen-trustinsoft.py
+
 import re # Regular expressions.
 from itertools import product # Cartesian product of lists.
 import json # JSON generation.
@@ -10,8 +13,8 @@ def string_of_json(obj):
     # Output standard pretty-printed JSON (RFC 7159) with 4-space indentation.
     s = json.dumps(obj,indent=4)
     # Sometimes we need multiple "include" fields in the JSON, which is
-    # impossible (or rather too cumbersome to bother) in the internal python
-    # representation.
+    # impossible (i.e. possible, but too cumbersome to bother implementing it
+    # here) in the internal python representation.
     s = re.sub(r'"include_+"', '"include"', s)
     return s
 
@@ -19,22 +22,23 @@ def string_of_json(obj):
 # ------------------------------ INITIAL CHECKS ------------------------------ #
 # ---------------------------------------------------------------------------- #
 
-print("1. Check the environment...")
+print("1. Check if directories and files exist...")
 
-if (os.path.isdir("trustinsoft")):
-    print("   > Directory 'trustinsoft' exists.")
-else:
-    exit("Directory 'trustinsoft' not found.")
+def check_dir(dir):
+    if (os.path.isdir(dir)):
+        print("   > OK! Directory '%s' exists." % dir)
+    else:
+        exit("Directory '%s' not found." % dir)
 
-if (os.path.isdir("src/libsodium")):
-    print("   > Directory 'src/libsodium' exists.")
-else:
-    exit("Directory 'src/libsodium' not found.")
+def check_file(file):
+    if (os.path.isfile(file)):
+        print("   > OK! File '%s' exists." % file)
+    else:
+        exit("File '%s' not found." % file)
 
-if (os.path.isfile("src/libsodium/include/sodium/version.h")):
-    print("   > File 'src/libsodium/include/sodium/version.h' exists.")
-else:
-    exit("File 'src/libsodium/include/sodium/version.h' not found.")
+check_dir("trustinsoft")
+check_dir("src/libsodium")
+check_file("src/libsodium/include/sodium/version.h")
 
 # ---------------------------------------------------------------------------- #
 # ------------------ GENERATE trustinsoft/<machdep>.config ------------------- #
