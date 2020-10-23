@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-# Run from the root of the project:
+# Run from the root of the libsodium project:
 # $ python3 trustinsoft/regen-trustinsoft.py
 
 import re # Regular expressions.
@@ -9,6 +9,7 @@ import json # JSON generation.
 import os # Write to files.
 import shutil # Copy file.
 
+# Outputting JSON.
 def string_of_json(obj):
     # Output standard pretty-printed JSON (RFC 7159) with 4-space indentation.
     s = json.dumps(obj,indent=4)
@@ -18,27 +19,36 @@ def string_of_json(obj):
     s = re.sub(r'"include_+"', '"include"', s)
     return s
 
+# Generated files which need to be a part of the repository.
+files_to_copy = [
+    {
+        'src': 'src/libsodium/include/sodium/version.h',
+        'dst': 'trustinsoft/sodium/version.h'
+    }
+]
+
 # ---------------------------------------------------------------------------- #
 # ------------------------------ INITIAL CHECKS ------------------------------ #
 # ---------------------------------------------------------------------------- #
 
-print("1. Check if directories and files exist...")
+print("1. Check if needed directories and files exist...")
 
 def check_dir(dir):
-    if (os.path.isdir(dir)):
+    if os.path.isdir(dir):
         print("   > OK! Directory '%s' exists." % dir)
     else:
         exit("Directory '%s' not found." % dir)
 
 def check_file(file):
-    if (os.path.isfile(file)):
+    if os.path.isfile(file):
         print("   > OK! File '%s' exists." % file)
     else:
         exit("File '%s' not found." % file)
 
-check_dir("trustinsoft")
-check_dir("src/libsodium")
-check_file("src/libsodium/include/sodium/version.h")
+check_dir('trustinsoft')
+check_dir('src/libsodium')
+for file in files_to_copy:
+    check_file(file['src'])
 
 # ---------------------------------------------------------------------------- #
 # ------------------ GENERATE trustinsoft/<machdep>.config ------------------- #
@@ -95,9 +105,9 @@ machdep_configs = map(make_machdep_config, machdeps)
 
 print("2. Generate 'trustinsoft/<machdep>.config' files...")
 for machdep_config in machdep_configs:
-    file_name = "trustinsoft/%s.config" % machdep_config["machdep"]
-    with open(file_name, 'w') as f:
-        print("   > Generate the '%s' file." % file_name)
+    filename = "trustinsoft/%s.config" % machdep_config["machdep"]
+    with open(filename, 'w') as f:
+        print("   > Generate the '%s' file." % filename)
         f.write(string_of_json(machdep_config))
 
 # ---------------------------------------------------------------------------- #
@@ -232,7 +242,10 @@ with open('tis.config', 'w') as f:
 # ------------------------------ COPY version.h ------------------------------ #
 # ---------------------------------------------------------------------------- #
 
-with open('src/libsodium/include/sodium/version.h', 'r') as f_src:
-    with open('trustinsoft/sodium/version.h', 'w') as f_dest:
-        print("5. Copy the 'version.h' file.")
-        shutil.copyfileobj(f_src, f_dest)
+print("5. Copy generated files.")
+for file in files_to_copy:
+    with open(file['src'], 'r') as f_src:
+        os.makedirs(os.path.dirname(file['dst']), exist_ok=True)
+        with open(file['dst'], 'w') as f_dst:
+            print("   > Copy '%s' to '%s'." % (file['src'], file['dst']))
+            shutil.copyfileobj(f_src, f_dst)
